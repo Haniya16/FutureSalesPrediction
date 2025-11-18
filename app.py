@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
-import matplotlib.pyplot as plt
 
 # ------------------------------
 # Load Models and Encoders
@@ -22,11 +21,11 @@ scaler = joblib.load(os.path.join(MODEL_FOLDER, "scaler.pkl"))
 st.set_page_config(page_title="Future Sales Prediction", layout="wide")
 st.title("📊 Future Sales Prediction Dashboard")
 
-# ------------------------------
-# Built-in demo dataset (no upload required)
-# ------------------------------
-st.info("This dashboard uses built-in demo data for demonstration. No CSV upload is required.")
+st.info("This dashboard uses built-in demo data. No CSV upload required for demo purposes.")
 
+# ------------------------------
+# Built-in demo dataset
+# ------------------------------
 data = pd.DataFrame({
     "Family": ["FOODS", "HOBBIES", "HOUSEHOLD", "FOODS", "HOBBIES", "HOUSEHOLD"],
     "ProductType": ["A", "B", "C", "A", "B", "C"],
@@ -64,7 +63,7 @@ for col, encoder in categorical_columns.items():
 # ------------------------------
 # Numeric columns scaling
 # ------------------------------
-numeric_cols = ["Sales", "StoreSize", "OilPrice"]  # Update according to your training data
+numeric_cols = ["Sales", "StoreSize", "OilPrice"]
 for col in numeric_cols:
     if col not in data.columns:
         data[col] = 0
@@ -77,7 +76,7 @@ data[numeric_cols] = scaler.transform(data[numeric_cols])
 data["Predicted_Sales"] = xgb_model.predict(data)
 
 # ------------------------------
-# Display Results Table
+# Show Results Table
 # ------------------------------
 st.subheader("Predicted Sales Results")
 st.dataframe(data)
@@ -92,13 +91,7 @@ st.line_chart(data["Predicted_Sales"])
 # Bar Chart: Actual vs Predicted Sales
 # ------------------------------
 st.subheader("Actual vs Predicted Sales")
-fig, ax = plt.subplots(figsize=(8,4))
-ax.bar(range(len(data)), data["Sales"], label="Actual Sales", alpha=0.7)
-ax.bar(range(len(data)), data["Predicted_Sales"], label="Predicted Sales", alpha=0.7)
-ax.set_xlabel("Records")
-ax.set_ylabel("Sales")
-ax.legend()
-st.pyplot(fig)
+st.bar_chart(data[["Sales","Predicted_Sales"]])
 
 # ------------------------------
 # Summary Statistics
